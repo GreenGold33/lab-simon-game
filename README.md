@@ -481,7 +481,14 @@ showSequence = function () {
 };
 ```
 
-**This is it, our Simon Game is already done!**
+Don't forget to execute the game to try it!!
+
+```javascript
+var simon = new SimonGame();
+simon.init();
+```
+
+**With this, our Simon Game is finished!**
 
 ## Summary
 
