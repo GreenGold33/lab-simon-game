@@ -1,79 +1,74 @@
-function SimonGame(){
-  var colors = ["red", "green", "blue", "yellow"];
-  var self = this;
-  this.sequence;
+function SimonGame () {
+  var colors          = ["red", "green", "blue", "yellow"];
+  this.sequence       = [];
   this.userClickCount = 0;
+  this.round          = 1;
+  var self            = this;
 
   this.init = function(){
-    this.sequence = [];
-    this.userClickCount = 0;
-    this.round = 1;
-    $(".counter").text("1");
-    generateSequence(3);
+    generateSequence(1);
     showSequence();
-
-    console.log(this.sequence);
-
-    $("button").unbind("click");
     $("button").on("click", checkUserInput);
-  }
+  };
 
-  generateSequence = function(elementNumber){
-    for (var i = 0; i < elementNumber; i++) {
-      self.sequence.push(colors[generateRandom()]);  
-    };
-  }
+  generateSequence = function (elementNumber) {
+    var randomColor = Math.floor(Math.random() * 4);
+    self.sequence.push(colors[randomColor]);
+  };
 
-  showSequence = function(){
-    var i = 0;
-    $("section").addClass("blocked");
+  showSequence = function () {
+    var current = 0;
+    $("#buttons-container").addClass("blocked");
+
     var interval = setInterval(function(){
-      $("button").removeClass("active");
-
-      if(i < self.sequence.length) {
-        $("." + self.sequence[i]).addClass("active");
-      } else {
+      if (!self.sequence[current]) {
         clearInterval(interval);
-        $("section").removeClass("blocked");
+        $("#buttons-container").removeClass("blocked");
+        return;
       }
-      
+
+      $("#" + self.sequence[current]).addClass("active");
+
       setTimeout(function(){
         $("button").removeClass("active");
       }, 700);
 
-      i++;
+      current++;
     }, 1000);
+  };
 
-  }
+  function checkUserInput () {
+    var colorInput   = $(this).attr("id");
+    var currentColor = self.sequence[self.userClickCount];
 
-  function checkUserInput(){
-    if($("section").hasClass("blocked")) {
-      return false;
-    }
-    
-    var colorInput = $(this).attr("class");
-    if(self.sequence[self.userClickCount] === colorInput) {
-      self.userClickCount++;
-    } else {
-      alert("Game over!! Try it again");
-      self.init();
+    if (currentColor !== colorInput) {
+      gameOver();
+      return;
     }
 
+    self.userClickCount++;
     if(self.userClickCount === self.sequence.length) {
       finishedRound();
     }
   }
 
-  function finishedRound(){
+  function finishedRound () {
     generateSequence(1);
     showSequence();
     self.userClickCount = 0;
     self.round++;
-    $(".counter").text(self.round);
+    $("#counter").text(self.round);
   }
 
-  function generateRandom(){
-    return Math.floor(Math.random() * 4);
+  function gameOver () {
+    alert("Game over!! Try it again");
+    self.sequence = [];
+    self.userClickCount = 0;
+    self.round = 1;
+    $("#counter").text("1");
+
+    $("button").unbind("click");
+    self.init();
   }
 }
 
